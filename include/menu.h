@@ -1,7 +1,6 @@
 #pragma once
-
-#include <memory>
 #include <optional>
+#include <string>
 
 #include "print_banner.h"
 #include "print_message.h"
@@ -10,44 +9,43 @@
 
 struct MenuState {
     std::optional<User> curr_user;
-    bool running = true;
+    bool running = false;
 };
 
-// enum MenuStatus { MENU_ERROR, MENU_OK };
+enum class MenuReturnState { Continue, ERROR, Exit };
 
 class Menu {
    public:
-    virtual MenuState display() = 0;
+    virtual MenuReturnState display(MenuState& state) = 0;
+    virtual ~Menu() = default;
 };
 
 class MenuManager {
-   private:
-    Menu* menu_type = nullptr;
+    Menu* menu_type;
+    MenuState& state_ref;
+    MenuReturnState return_state;
 
    public:
-    MenuManager(Menu*);
-
+    UsersList* curr_users;
+    MenuManager(MenuState& state, UsersList* u_list);
     void set_menu(Menu* menu);
-
-    MenuState run_menu();
+    MenuReturnState run_menu();
 };
 
 class LoginMenu : public Menu {
-   private:
+    MenuManager& m_manager;
     UsersList& curr_list;
-    MenuState state;
 
    public:
-    LoginMenu(UsersList& u_list);
-    MenuState display() override;
+    LoginMenu(UsersList& u_list, MenuManager&);
+    MenuReturnState display(MenuState& state) override;
 };
 
-class BoardMenu : public Menu {
-   public:
-    MenuState display() override;
-};
+class UserMenu : public Menu {
+    // User& user;
+    MenuManager& m_manager;
 
-class ConfirmationMenu : public Menu {
    public:
-    MenuState display() override;
+    UserMenu(MenuManager&);
+    MenuReturnState display(MenuState& state) override;
 };

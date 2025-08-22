@@ -1,24 +1,23 @@
 #pragma once
-
 #include <optional>
+#include <vector>
 
 #include "user.h"
 
 class UsersList {
-   private:
-    User* users;
-    int capacity;
-    int users_count;
+    std::vector<User> users;
+    size_t max_users;
 
    public:
-    UsersList();
-    UsersList(int);
+    UsersList(size_t max = 100);
+
     UsersList(const UsersList&) = delete;
     UsersList& operator=(const UsersList&) = delete;
+    UsersList(UsersList&&) = default;
+    UsersList& operator=(UsersList&&) = default;
+    ~UsersList() = default;
 
-    void add_user(const User&);
-    int get_users_count();
-    std::optional<User> search_users(const User&);
-
-    ~UsersList();
+    bool add_user(const User& user);
+    std::optional<User> search_users(const User& match) const;
+    size_t size() const;
 };

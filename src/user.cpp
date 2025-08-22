@@ -1,45 +1,19 @@
 #include "user.h"
 
-#include "print_message.h"
+void User::set_username(const std::string& uname) { username = uname; }
 
-int User::user_count = 0;
+void User::set_userpasswd(const std::string& passwd) { password = passwd; }
 
-User::User() {
-    user_name = "";
-    user_passwd = "";
-    balance = 0;
-    user_count++;
-    id = user_count;
-}
+std::string User::get_username() const { return username; }
 
-void User::set_username(std::string user_name) { this->user_name = user_name; }
+std::string User::get_userpasswd() const { return password; }
 
-std::string User::get_username() { return this->user_name; }
+double User::get_balance() const { return balance; }
 
-void User::set_userpasswd(std::string user_passwd) { this->user_passwd = user_passwd; }
+void User::deposit(double amount) { balance += amount; }
 
-std::string User::get_userpasswd() { return this->user_passwd; }
+bool User::check_credentials(const User& other) const { return username == other.username && password == other.password; }
 
-bool User::operator==(const User& u) const {
-    if (this->user_name != u.user_name || this->user_passwd != u.user_passwd) return false;
+bool User::operator==(const User& other) const { return username == other.username && password == other.password; }
 
-    return true;
-}
-
-int User::deposit(int value) {
-    balance += value;
-    return balance;
-}
-
-int User::withdraw(int value) {
-    if (value > balance) {
-        printMessage("Insufficient Balance", MsgType::ERROR);
-        return 0;
-    }
-    balance -= value;
-    printMessage("Withdraw successfull", MsgType::INFO);
-
-    return balance;
-}
-
-int User::get_balance() { return balance; }
+void User::withdraw(double amount) { balance -= amount; }

@@ -1,37 +1,18 @@
 #include "users_list.h"
 
-#include "print_message.h"
+UsersList::UsersList(size_t max) : max_users(max) {}
 
-UsersList::UsersList() {
-    capacity = 0;
-    users = nullptr;
-    users_count = 0;
+bool UsersList::add_user(const User& user) {
+    if (users.size() >= max_users) return false;
+    users.push_back(user);
+    return true;
 }
 
-UsersList::UsersList(int capacity) {
-    this->capacity = capacity;
-    this->users = new User[capacity];
-    this->users_count = 0;
-}
-
-void UsersList::add_user(const User& u) {
-    if (users_count < capacity && users != nullptr) {
-        users[users_count++] = u;
-    } else {
-        printMessage("Users Database is Full", MsgType::ERROR);
+std::optional<User> UsersList::search_users(const User& match) const {
+    for (const auto& u : users) {
+        if (u == match) return u;
     }
-}
-
-int UsersList::get_users_count() { return users_count; }
-
-std::optional<User> UsersList::search_users(const User& u) {
-    for (int i = 0; i < users_count; i++) {
-        if (u == users[i]) {
-            return users[i];
-        }
-    }
-
     return std::nullopt;
 }
 
-UsersList::~UsersList() { delete[] users; }
+size_t UsersList::size() const { return users.size(); }

@@ -1,33 +1,27 @@
 #pragma once
-
-#include <iostream>
 #include <string>
 
 class User {
-   private:
-    std::string user_name;
-    std::string user_passwd;
-    float balance;
-    int id;
+    std::string username;
+    std::string password;
+    double balance = 0.0;
 
    public:
-    static int user_count;
-    User();
-    //~User();
+    User() = default;
 
-    void set_username(std::string user_name);
+    User(const User&) = default;
+    User(User&&) = default;
+    User& operator=(const User&) = default;
+    User& operator=(User&&) = default;
+    ~User() = default;
 
-    std::string get_username();
-
-    void set_userpasswd(std::string user_passwd);
-
-    std::string get_userpasswd();
-
-    bool operator==(const User&) const;
-
-    int deposit(int value);
-
-    int withdraw(int value);
-
-    int get_balance();
+    void set_username(const std::string& uname);
+    void set_userpasswd(const std::string& passwd);
+    std::string get_username() const;
+    std::string get_userpasswd() const;
+    double get_balance() const;
+    void deposit(double amount);
+    void withdraw(double amount);
+    bool check_credentials(const User& other) const;
+    bool operator==(const User& other) const;
 };
