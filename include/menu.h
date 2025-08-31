@@ -28,6 +28,7 @@ class MenuManager {
    public:
     UsersList* curr_users;
     MenuManager(MenuState& state, UsersList* u_list);
+    ~MenuManager();
     void set_menu(Menu* menu);
     MenuReturnState run_menu();
 };
@@ -47,5 +48,13 @@ class UserMenu : public Menu {
 
    public:
     UserMenu(MenuManager&);
+    MenuReturnState display(MenuState& state) override;
+};
+
+class PayPillsMenu : public Menu {
+    MenuManager& m_manager;
+
+   public:
+    PayPillsMenu(MenuManager&);
     MenuReturnState display(MenuState& state) override;
 };

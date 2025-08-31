@@ -7,6 +7,8 @@ MenuManager::MenuManager(MenuState& state, UsersList* u_list) : state_ref(state)
     menu_type = new LoginMenu(*curr_users, *this);
 };
 
+MenuManager::~MenuManager() { delete menu_type; }
+
 void MenuManager::set_menu(Menu* menu) {
     delete menu_type;
     menu_type = menu;
@@ -67,6 +69,7 @@ MenuReturnState LoginMenu::display(MenuState& state) {
                 state.curr_user.reset();
                 return MenuReturnState::Exit;
             }
+            return MenuReturnState::Continue;
         }
     } else if (query[0] == 'q' || query[0] == 'Q') {
         printMessage("Goodbye!", MsgType::INFO);
@@ -97,7 +100,8 @@ MenuReturnState UserMenu::display(MenuState& state) {
     std::cout << "[1] View balance\n";
     std::cout << "[2] Withdraw\n";
     std::cout << "[3] Deposit\n";
-    std::cout << "[4] Logout\n";
+    std::cout << "[4] Pay Pills\n";
+    std::cout << "[5] Logout\n";
 
     std::string query;
     std::cin >> query;  // Get user input
@@ -133,6 +137,9 @@ MenuReturnState UserMenu::display(MenuState& state) {
         return MenuReturnState::Continue;
 
     } else if (query == "4") {
+        m_manager.set_menu(new PayPillsMenu(m_manager));
+        return MenuReturnState::Continue;
+    } else if (query == "5") {
         // Option 4: Logout
         printMessage("Logged Out", MsgType::INFO);
         m_manager.set_menu(new LoginMenu(*m_manager.curr_users, m_manager));
@@ -143,4 +150,42 @@ MenuReturnState UserMenu::display(MenuState& state) {
         printMessage("Invalid selection", MsgType::WARNING);
         return MenuReturnState::Continue;
     }
+}
+
+PayPillsMenu::PayPillsMenu(MenuManager& manager) : m_manager(manager) {}
+
+MenuReturnState PayPillsMenu::display(MenuState& state) {
+    std::cout << "\033[2J\033[1;1H";  // This is to clear the screen
+
+    printMessage("Pay Your Pills Here ", MsgType::INFO);
+    User& user = *state.curr_user;
+
+    std::string query;
+
+    std::cout << "[1] Recharge Mobile \n";
+    std::cout << "[2] Pay electricity pills \n";
+    std::cout << "[3] Pay College Fees \n";
+    std::cout << "[4] quit \n";
+
+    std::cout << "Please Make a Selection: ";
+    std::cin >> query;
+
+    if (query == "1") {
+        std::string number;
+        std::cout << "Enter Mobile Number: ";
+        std::cin >> number;
+        std::cout << "Enter Recharge Amount: ";
+        double amount;
+        std::cin >> amount;
+
+        user.withdraw(amount);
+        std::cout << number << "Recharged with amount " << amount << "Succesfully\n";
+
+        return MenuReturnState::Continue;
+    } else if (query == "4") {
+        m_manager.set_menu(new UserMenu(m_manager));
+
+        return MenuReturnState::Continue;
+    }
+    return MenuReturnState::Exit;
 }

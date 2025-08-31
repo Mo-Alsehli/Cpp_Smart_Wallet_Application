@@ -25,11 +25,6 @@ int main() {
     // Shared menu state
     MenuState state;
 
-    // Menu Return state
-    MenuReturnState return_state;
-
-    // Setup menu
-    // LoginMenu login_menu(u_list);
     MenuManager my_manager(state, &u_list);
 
     printBanner("Welcome To Smart Wallet");
